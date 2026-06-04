@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edukasi Pancasila</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Merriweather:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --sidebar-bg: #0f172a; --sidebar-hover: #1e293b; --accent-gold: #fbbf24;
+            --header-red: #be123c; --bg-light: #f8fafc; --text-main: #334155; --card-border: #e2e8f0;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR */
+        .sidebar { width: 280px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; flex-shrink: 0; z-index: 10; }
+        .brand { padding: 30px 25px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .brand h2 { font-family: 'Merriweather', serif; color: var(--accent-gold); font-size: 22px; margin-bottom: 5px; }
+        .brand p { font-size: 12px; color: #94a3b8; letter-spacing: 0.5px; }
+        .menu-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 1px; margin: 25px 0 10px 25px; font-weight: 600; }
+        .menu-list { list-style: none; padding: 0 15px; }
+        
+        /* Tombol Menu */
+        .menu-item { display: flex; align-items: center; padding: 12px 20px; color: #cbd5e1; text-decoration: none; border-radius: 8px; margin-bottom: 5px; font-size: 15px; transition: all 0.2s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; font-family: 'Inter', sans-serif;}
+        .menu-item i { margin-right: 15px; width: 20px; text-align: center; }
+        .menu-item:hover { background-color: var(--sidebar-hover); color: white; }
+        .menu-item.active { background-color: rgba(251, 191, 36, 0.1); color: var(--accent-gold); border-left: 4px solid var(--accent-gold); font-weight: 600;}
+        
+        /* Progress Kuis di Bawah Sidebar */
+        .progress-container { margin-top: auto; padding: 25px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .progress-text { font-size: 13px; color: #94a3b8; display: flex; justify-content: space-between; margin-bottom: 8px;}
+        .progress-text span { color: var(--accent-gold); font-weight: bold; }
+        .progress-bar { height: 6px; background-color: #1e293b; border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background-color: var(--accent-gold); width: 0%; transition: width 0.3s; }
+
+        /* MAIN CONTENT KANAN */
+        .main-content { flex: 1; overflow-y: auto; position: relative; background-color: var(--bg-light); }
+        
+        /* Kelas untuk menyembunyikan halaman */
+        .page-section { display: none; }
+        .page-section.active-page { display: block; animation: fadeIn 0.4s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* HEADER HALAMAN */
+        .page-header { background: linear-gradient(135deg, #9f1239, #be123c); padding: 50px; color: white; }
+        .badge { display: inline-block; background-color: rgba(255,255,255,0.2); padding: 6px 15px; border-radius: 20px; font-size: 12px; font-weight: 600; letter-spacing: 1px; margin-bottom: 20px; }
+        .page-header h1 { font-family: 'Merriweather', serif; font-size: 32px; margin-bottom: 10px; }
+        .page-header p { font-size: 16px; opacity: 0.9; }
+
+        .content-body { padding: 40px 50px; max-width: 900px; margin: 0 auto; }
+        
+        /* KOMPONEN KARTU KUIS & LAINNYA */
+        .card { background: white; border-radius: 12px; padding: 35px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); border: 1px solid var(--card-border); margin-bottom: 30px; line-height: 1.6;}
+        
+        .input-name { width: 100%; padding: 15px; margin: 20px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; font-family: 'Inter', sans-serif;}
+        .input-name:focus { border-color: var(--header-red); outline: none; }
+        
+        .btn-submit { background-color: #0f172a; color: white; border: none; padding: 15px 30px; font-size: 16px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.3s; width: 100%; margin-bottom: 20px;}
+        .btn-submit:hover { background-color: #1e293b; }
+
+        .q-number { font-size: 13px; font-weight: 600; color: #be123c; letter-spacing: 1.5px; margin-bottom: 15px; display: block; }
+        .q-text { font-family: 'Merriweather', serif; font-size: 20px; color: #0f172a; margin-bottom: 25px; line-height: 1.5; }
+        
+        .options-group { display: flex; flex-direction: column; gap: 12px; }
+        .option-label { display: flex; align-items: center; padding: 16px 20px; border: 2px solid var(--card-border); border-radius: 8px; cursor: pointer; transition: all 0.2s; font-size: 16px; color: #475569; }
+        .option-label:hover { border-color: #cbd5e1; background-color: #f8fafc; }
+        .option-label.selected { border-color: #be123c; background-color: #fff1f2; color: #be123c; font-weight: 500; }
+        .option-label input[type="radio"] { margin-right: 15px; width: 18px; height: 18px; accent-color: #be123c; cursor: pointer; }
+
+        #result-box { display: none; padding: 30px; border-radius: 12px; text-align: center; margin-bottom: 50px; border: 2px solid transparent;}
+        .greeting-text { font-size: 18px; color: var(--header-red); font-weight: 600; margin-bottom: 20px; display: none; }
+
+        /* TABEL PERINGKAT */
+        .ranking-table { width: 100%; border-collapse: collapse; text-align: left; }
+        .ranking-table th { background-color: var(--sidebar-bg); color: white; padding: 15px; border-radius: 8px 8px 0 0;}
+        .ranking-table td { padding: 15px; border-bottom: 1px solid #eee; }
+        .ranking-table tr:hover td { background-color: #f8fafc; }
+        .rank-1 { color: #fbbf24; font-weight: bold; font-size: 20px; }
+        .rank-2 { color: #94a3b8; font-weight: bold; font-size: 18px;}
+        .rank-3 { color: #b45309; font-weight: bold; font-size: 18px;}
+
+        /* RESPONSIVE */
+        @media (max-width: 900px) {
+            body { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; flex-direction: row; flex-wrap: wrap; justify-content: space-between; padding: 10px; }
+            .brand { border: none; padding: 10px; }
+            .menu-label, .progress-container { display: none; }
+            .menu-list { display: flex; overflow-x: auto; padding: 10px; width: 100%;}
+            .menu-item { margin-bottom: 0; margin-right: 10px; white-space: nowrap; width: auto;}
+            .main-content { overflow-y: visible; }
+            .page-header { padding: 30px 20px; }
+            .content-body { padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="brand">
+            <h2>Edukasi Pancasila</h2>
+            <p>INDONESIA · BELAJAR BERSAMA</p>
+        </div>
+
+        <div class="menu-label">Menu Utama</div>
+        <ul class="menu-list">
+            <li><button class="menu-item active" onclick="bukaHalaman('page-kuis', this)"><i class="fa-solid fa-file-signature"></i> Kuis Pancasila</button></li>
+            <li><button class="menu-item" onclick="bukaHalaman('page-modul', this)"><i class="fa-solid fa-book-open"></i> Modul Belajar</button></li>
+            <li><button class="menu-item" onclick="bukaHalaman('page-peringkat', this)"><i class="fa-solid fa-trophy"></i> Peringkat Top</button></li>
+            <li><button class="menu-item" onclick="bukaHalaman('page-sejarah', this)"><i class="fa-solid fa-landmark"></i> Sejarah</button></li>
+        </ul>
+
+        <div class="progress-container" id="kuis-progress-ui">
+            <div class="progress-text">
+                Progress Kuis <span id="progress-text">0 / 0</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        
+        <section id="page-kuis" class="page-section active-page">
+            <header class="page-header">
+                <div class="badge"><i class="fa-solid fa-pen"></i> EVALUASI</div>
+                <h1>Kuis Pancasila</h1>
+                <p>Uji pemahaman dasar Anda tentang lambang, sejarah, dan nilai-nilai negara Indonesia.</p>
+            </header>
+
+            <div class="content-body">
+                <div id="intro-screen" class="card" style="text-align: center;">
+                    <h3 style="color: var(--sidebar-bg); margin-bottom: 10px; font-family: 'Merriweather', serif;">Selamat Datang di Kuis Pancasila!</h3>
+                    <p id="loading-msg" style="color: #64748b; font-weight: 500;"><i class="fa-solid fa-circle-notch fa-spin"></i> Menghubungkan ke server (mengambil soal)...</p>
+                    <div id="form-nama" style="display: none; margin-top: 20px;">
+                        <p style="color: #475569;">Silakan masukkan nama lengkap Anda untuk memulai kuis.</p>
+                        <input type="text" id="user-name" class="input-name" placeholder="Ketik nama Anda di sini..." required>
+                        <button class="btn-submit" onclick="startQuiz()">Mulai Kuis Sekarang</button>
+                    </div>
+                </div>
+
+                <div id="greeting-display" class="greeting-text"></div>
+                <div id="quiz-container" style="display: none;"></div>
+                
+                <button class="btn-submit" id="btn-submit-quiz" style="display: none;" onclick="hitungNilai()">Kirim Jawaban Kuis</button>
+                <div id="result-box"></div>
+            </div>
+        </section>
+
+        <section id="page-modul" class="page-section">
+            <header class="page-header" style="background: linear-gradient(135deg, #0284c7, #0369a1);">
+                <div class="badge"><i class="fa-solid fa-book"></i> MATERI</div>
+                <h1>Modul Pembelajaran</h1>
+                <p>Pelajari makna dan butir-butir pengamalan kelima sila Pancasila di sini.</p>
+            </header>
+            
+            <div class="content-body">
+                <div class="card">
+                    <h2 style="color: #0369a1; margin-bottom: 15px; font-family: 'Merriweather', serif;">Makna 5 Sila Pancasila</h2>
+                    <p>Pancasila sebagai dasar negara memiliki makna yang mendalam di setiap silanya:</p>
+                    <ul style="margin-top: 15px; padding-left: 20px; color: #475569;">
+                        <li style="margin-bottom: 10px;"><b>1. Bintang:</b> Melambangkan cahaya kerohanian bagi setiap manusia (Ketuhanan).</li>
+                        <li style="margin-bottom: 10px;"><b>2. Rantai:</b> Melambangkan hubungan manusia satu sama lain yang saling membantu.</li>
+                        <li style="margin-bottom: 10px;"><b>3. Pohon Beringin:</b> Mencerminkan kesatuan dan persatuan Indonesia yang kokoh.</li>
+                        <li style="margin-bottom: 10px;"><b>4. Kepala Banteng:</b> Melambangkan tenaga rakyat dan asas musyawarah untuk mufakat.</li>
+                        <li style="margin-bottom: 10px;"><b>5. Padi dan Kapas:</b> Melambangkan kemakmuran dan keadilan sosial bagi seluruh rakyat.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-peringkat" class="page-section">
+            <header class="page-header" style="background: linear-gradient(135deg, #d97706, #b45309);">
+                <div class="badge"><i class="fa-solid fa-star"></i> LEADERBOARD</div>
+                <h1>Peringkat Nilai Tertinggi</h1>
+                <p>Daftar peserta didik dengan pencapaian nilai Kuis terbaik.</p>
+            </header>
+            
+            <div class="content-body">
+                <div class="card" style="padding: 0; overflow: hidden;">
+                    <table class="ranking-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 80px; text-align: center;">Peringkat</th>
+                                <th>Nama Peserta</th>
+                                <th style="text-align: center;">Skor Akhir</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="text-align: center;"><i class="fa-solid fa-trophy rank-1"></i></td>
+                                <td><b style="font-size: 17px;">Budi Santoso</b><br><small style="color: #94a3b8;">Selesai dalam 2m 14s</small></td>
+                                <td style="text-align: center; font-weight: bold; font-size: 18px; color: #166534;">100</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fa-solid fa-medal rank-2"></i></td>
+                                <td><b style="font-size: 17px;">Siti Aminah</b><br><small style="color: #94a3b8;">Selesai dalam 3m 05s</small></td>
+                                <td style="text-align: center; font-weight: bold; font-size: 18px; color: #166534;">100</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center;"><i class="fa-solid fa-medal rank-3"></i></td>
+                                <td><b style="font-size: 17px;">Agus Pratama</b><br><small style="color: #94a3b8;">Selesai dalam 4m 10s</small></td>
+                                <td style="text-align: center; font-weight: bold; font-size: 18px; color: #b45309;">80</td>
+                            </tr>
+                            <tr>
+                                <td style="text-align: center; font-weight: bold; color: #64748b;">4</td>
+                                <td><b style="font-size: 17px;">Dewi Lestari</b></td>
+                                <td style="text-align: center; font-weight: bold; font-size: 18px; color: #b45309;">80</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-sejarah" class="page-section">
+            <header class="page-header" style="background: linear-gradient(135deg, #15803d, #166534);">
+                <div class="badge"><i class="fa-solid fa-clock-rotate-left"></i> LINTAS WAKTU</div>
+                <h1>Sejarah Lahirnya Pancasila</h1>
+                <p>Mengenang momen penting perumusan dasar negara pada 1 Juni 1945.</p>
+            </header>
+            
+            <div class="content-body">
+                <div class="card">
+                    <h2 style="color: #166534; margin-bottom: 15px; font-family: 'Merriweather', serif;">Sidang BPUPKI</h2>
+                    <p style="margin-bottom: 15px; color: #475569; text-align: justify;">Lahirnya Pancasila tidak lepas dari momen sidang BPUPKI (Badan Penyelidik Usaha-usaha Persiapan Kemerdekaan Indonesia) yang berlangsung dari tanggal 29 Mei hingga 1 Juni 1945. Pada sidang hari terakhir, Ir. Soekarno menyampaikan pidatonya yang fenomenal mengenai konsep awal dasar negara.</p>
+                    <p style="color: #475569; text-align: justify;">Dalam pidato tersebut, beliau mengemukakan lima prinsip dasar negara yang beliau beri nama <b>Pancasila</b>. Usulan tersebut diterima dengan baik oleh para peserta sidang dan kemudian dibahas lebih lanjut oleh Panitia Sembilan hingga menghasilkan Piagam Jakarta yang menjadi cikal bakal Pembukaan UUD 1945.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // --- 1. LOGIKA NAVIGASI MENU (SPA) ---
+        function bukaHalaman(idHalaman, elemenTombol) {
+            // Sembunyikan semua halaman
+            const semuaHalaman = document.querySelectorAll('.page-section');
+            semuaHalaman.forEach(halaman => {
+                halaman.classList.remove('active-page');
+            });
+
+            // Hilangkan warna aktif dari semua tombol menu sidebar
+            const semuaMenu = document.querySelectorAll('.menu-item');
+            semuaMenu.forEach(menu => {
+                menu.classList.remove('active');
+            });
+
+            // Tampilkan halaman yang dituju
+            document.getElementById(idHalaman).classList.add('active-page');
+            
+            // Berikan warna aktif pada tombol menu yang baru diklik
+            elemenTombol.classList.add('active');
+
+            // Opsional: Sembunyikan widget progress bar kuis jika bukan di halaman kuis
+            const progressUI = document.getElementById('kuis-progress-ui');
+            if(idHalaman === 'page-kuis') {
+                progressUI.style.display = 'block';
+            } else {
+                progressUI.style.display = 'none';
+            }
+        }
+
+        // --- 2. LOGIKA KUIS (Fetch Apps Script) ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzOPO8fDQu-Ner1ABdFtD7YIKtrQIbFRj3Gf3vax5YsMLR-lW66Z0K9tZsKThvA58zN/exec";
+        
+        let soalKuis = [];
+        let soalTerjawab = new Set();
+        let studentName = "";
+
+        // Mengambil data kuis saat web pertama kali dibuka
+        window.onload = async function() {
+            try {
+                const response = await fetch(SCRIPT_URL, { redirect: 'follow' });
+                if (!response.ok) throw new Error("Gagal terhubung");
+                
+                soalKuis = await response.json();
+                
+                document.getElementById("progress-text").innerText = `0 / ${soalKuis.length}`;
+                
+                document.getElementById('loading-msg').style.display = 'none';
+                document.getElementById('form-nama').style.display = 'block';
+                
+            } catch (error) {
+                console.error("Error Fetch:", error);
+                document.getElementById('loading-msg').innerHTML = `<span style="color:#be123c;">Gagal memuat soal. Pastikan Script URL Google Apps Script Anda benar.</span>`;
+            }
+        };
+
+        function startQuiz() {
+            const inputName = document.getElementById('user-name').value.trim();
+            if(inputName === "") { alert("Harap masukkan nama Anda."); return; }
+            
+            studentName = inputName;
+            document.getElementById('intro-screen').style.display = 'none';
+            document.getElementById('greeting-display').style.display = 'block';
+            document.getElementById('greeting-display').innerText = `Halo, ${studentName}! Selamat mengerjakan kuis.`;
+            
+            document.getElementById('quiz-container').style.display = 'block';
+            document.getElementById('btn-submit-quiz').style.display = 'block';
+            
+            renderSoal();
+        }
+
+        function renderSoal() {
+            const container = document.getElementById("quiz-container");
+            let html = "";
+
+            soalKuis.forEach((soal, index) => {
+                let nomor = (index + 1).toString().padStart(2, '0');
+                let opsiHTML = "";
+                soal.opsi.forEach((teksOpsi, idxOpsi) => {
+                    opsiHTML += `
+                        <label class="option-label" onclick="updateProgress(this, 'soal${index}')">
+                            <input type="radio" name="soal${index}" value="${idxOpsi}">
+                            <span>${teksOpsi}</span>
+                        </label>
+                    `;
+                });
+
+                html += `
+                    <div class="card" id="card-soal-${index}">
+                        <span class="q-number">SOAL ${nomor}</span>
+                        <h3 class="q-text">${soal.pertanyaan}</h3>
+                        <div class="options-group">
+                            ${opsiHTML}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function updateProgress(labelElement, namaSoal) {
+            const semuaLabel = document.querySelectorAll(`input[name="${namaSoal}"]`);
+            semuaLabel.forEach(input => input.parentElement.classList.remove('selected'));
+            labelElement.classList.add('selected');
+
+            soalTerjawab.add(namaSoal);
+            const totalTerjawab = soalTerjawab.size;
+            const totalSoal = soalKuis.length;
+            
+            document.getElementById("progress-text").innerText = `${totalTerjawab} / ${totalSoal}`;
+            document.getElementById("progress-fill").style.width = `${(totalTerjawab / totalSoal) * 100}%`;
+        }
+
+        function hitungNilai() {
+            const totalSoal = soalKuis.length;
+            let soalBelumDijawab = [];
+
+            soalKuis.forEach((soal, index) => {
+                const jawabanUser = document.querySelector(`input[name="soal${index}"]:checked`);
+                if (!jawabanUser) { soalBelumDijawab.push(index + 1); }
+            });
+
+            if (soalBelumDijawab.length > 0) {
+                alert(`⚠️ TUNGGU DULU!\nAnda belum menjawab soal nomor: ${soalBelumDijawab.join(", ")}.\n\nSilakan lengkapi jawaban Anda terlebih dahulu.`);
+                return; 
+            }
+
+            let skor = 0;
+            const bobotPerSoal = 100 / totalSoal;
+
+            soalKuis.forEach((soal, index) => {
+                const jawabanUser = document.querySelector(`input[name="soal${index}"]:checked`);
+                if (jawabanUser && parseInt(jawabanUser.value) === parseInt(soal.jawabanBenar)) {
+                    skor += bobotPerSoal;
+                }
+            });
+
+            skor = Math.round(skor);
+
+            document.getElementById("btn-submit-quiz").style.display = "none";
+            document.getElementById("quiz-container").style.display = "none";
+            document.getElementById("greeting-display").style.display = "none";
+            
+            const resultBox = document.getElementById("result-box");
+            resultBox.style.display = "block";
+            
+            if(skor === 100) {
+                resultBox.style.backgroundColor = "#f0fdf4";
+                resultBox.style.borderColor = "#bbf7d0";
+                resultBox.style.color = "#166534";
+                resultBox.innerHTML = `<h2 style="font-family: 'Merriweather'; font-size: 28px; margin-bottom:10px;">Skor Anda: ${skor}</h2><p>Luar biasa, <b>${studentName}</b>! Pemahaman Anda tentang Pancasila sangat sempurna.</p>`;
+            } else {
+                resultBox.style.backgroundColor = "#fffbeb";
+                resultBox.style.borderColor = "#fef08a";
+                resultBox.style.color = "#92400e";
+                resultBox.innerHTML = `<h2 style="font-family: 'Merriweather'; font-size: 28px; margin-bottom:10px;">Skor Anda: ${skor}</h2><p>Kerja bagus, <b>${studentName}</b>! Mari terus pelajari nilai-nilai Pancasila.</p>`;
+            }
+            resultBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    </script>
+</body>
+</html>
